@@ -1,0 +1,14 @@
+{
+  "name": "graphql-todo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:lucas-mdiniz/graphql-todo.git",
+  "author": "Lucas Diniz <lucas.mdiniz@live.com>",
+  "license": "GNU",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  }
+}
