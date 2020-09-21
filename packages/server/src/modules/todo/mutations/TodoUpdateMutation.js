@@ -8,6 +8,7 @@ import {
 
 import Todo from '../TodoModel';
 import TodoType from '../TodoType';
+import { TodoLoader } from '../../loader';
 
 const mutation = mutationWithClientMutationId({
   name: 'TodoUpdate',
@@ -30,7 +31,10 @@ const mutation = mutationWithClientMutationId({
         { description, done },
         { new: true }
       );
-      return todo;
+      return {
+        id: todo._id,
+        error: null,
+      };
     } catch (error) {
       console.log(error);
     }
@@ -38,8 +42,14 @@ const mutation = mutationWithClientMutationId({
   outputFields: {
     todo: {
       type: TodoType,
-      resolve: (todo) => {
-        return todo;
+      resolve: ({ id }, _, context) => {
+        if (!id) {
+          return null;
+        }
+
+        const updatedTodo = TodoLoader.load(context, id);
+
+        return updatedTodo;
       },
     },
   },

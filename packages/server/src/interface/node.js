@@ -2,6 +2,8 @@ import { nodeDefinitions, fromGlobalId } from 'graphql-relay';
 
 import Todo from '../modules/todo/TodoModel';
 import TodoType from '../modules/todo/TodoType';
+import User from '../modules/user/UserModel';
+import UserType from '../modules/user/UserType';
 
 const { nodeField, nodeInterface } = nodeDefinitions(
   async (globalId) => {

@@ -1,7 +1,8 @@
 import { GraphQLString, GraphQLBoolean, GraphQLNonNull } from 'graphql';
 import { mutationWithClientMutationId, toGlobalId } from 'graphql-relay';
 
-import Todo from '../TodoModel';
+import * as TodoLoader from '../TodoLoader';
+import TodoModel from '../TodoModel';
 import { TodoConnection } from '../TodoType';
 
 const mutation = mutationWithClientMutationId({
@@ -18,9 +19,16 @@ const mutation = mutationWithClientMutationId({
     const { description, done } = args;
 
     try {
-      const todo = new Todo({ description, done });
+      const todo = new TodoModel({
+        description,
+        done,
+        owner: '5f5d12132dbe30184fe98027',
+      });
       await todo.save();
-      return todo;
+      return {
+        id: todo._id,
+        error: null,
+      };
     } catch (error) {
       console.log(error);
     }
@@ -28,14 +36,17 @@ const mutation = mutationWithClientMutationId({
   outputFields: {
     todoEdge: {
       type: TodoConnection.edgeType,
-      resolve: (todo) => {
-        if (!todo._id) {
+      resolve: async ({ id }, _, context) => {
+        console.log(id);
+        if (!id) {
           return null;
         }
 
+        const newTodo = await TodoLoader.load(context, id);
+
         return {
-          cursor: toGlobalId('Todo', todo._id),
-          node: todo,
+          cursor: toGlobalId('Todo', newTodo.id),
+          node: newTodo,
         };
       },
     },

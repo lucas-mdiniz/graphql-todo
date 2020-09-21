@@ -10,7 +10,7 @@ import { globalIdField, connectionDefinitions } from 'graphql-relay';
 
 const TodoType = new GraphQLObjectType({
   name: 'Todo',
-  fields: {
+  fields: () => ({
     id: globalIdField('Todo'),
     description: {
       type: GraphQLNonNull(GraphQLString),
@@ -18,7 +18,7 @@ const TodoType = new GraphQLObjectType({
     done: {
       type: GraphQLNonNull(GraphQLBoolean),
     },
-  },
+  }),
   interfaces: () => [nodeInterface],
 });
 
