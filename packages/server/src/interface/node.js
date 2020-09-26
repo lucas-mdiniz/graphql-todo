@@ -1,15 +1,18 @@
 import { nodeDefinitions, fromGlobalId } from 'graphql-relay';
 
-import Todo from '../modules/todo/TodoModel';
+import Todo from '../modules/todo/TodoLoader';
 import TodoType from '../modules/todo/TodoType';
-import User from '../modules/user/UserModel';
+import User from '../modules/user/UserLoader';
 import UserType from '../modules/user/UserType';
 
+import * as TodoLoader from '../modules/todo/TodoLoader';
+
 const { nodeField, nodeInterface } = nodeDefinitions(
-  async (globalId) => {
+  async (globalId, context) => {
     const { type, id } = fromGlobalId(globalId);
+
     if (type === 'Todo') {
-      const todo = await Todo.findById(id);
+      const todo = await TodoLoader.load(context, id);
       return todo;
     } else if (type === 'User') {
       const user = await User.findById(id);
@@ -17,9 +20,10 @@ const { nodeField, nodeInterface } = nodeDefinitions(
     }
   },
   (obj) => {
-    if (obj.constructor.modelName === 'Todo') {
+    console.log();
+    if (obj instanceof Todo) {
       return TodoType;
-    } else if (obj.constructor.modelName === 'User') {
+    } else if (obj instanceof User) {
       return UserType;
     }
   }

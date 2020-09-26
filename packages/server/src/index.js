@@ -12,15 +12,13 @@ const app = express();
 
 app.use(
   '/graphql',
-  graphqlHTTP(async () => {
+  graphqlHTTP(async (req) => {
     const dataloaders = getDataloaders(loaders);
     return {
       schema: schema,
       graphiql: true,
       context: {
-        user: await getUser(
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNWUyMWFlNDllNGRmYTAyZTc3MjUxZiIsImlhdCI6MTYwMDE4NTc5Mn0.DwRkCm5magC7TeVnussco7_e-qhDvx4g_Uze5B_ihfo'
-        ),
+        user: await getUser(req.headers.authorization),
         dataloaders,
       },
     };

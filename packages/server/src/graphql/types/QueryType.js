@@ -19,12 +19,10 @@ const QueryType = new GraphQLObjectType({
         await TodoLoader.load(context, fromGlobalId(id).id),
     },
     todos: {
-      type: new GraphQLNonNull(TodoConnection.connectionType),
+      type: TodoConnection.connectionType,
       args: connectionArgs,
-      resolve: async (_, args, context) => {
-        console.log(context);
-        return await TodoLoader.loadTodos(context, args);
-      },
+      resolve: async (_, args, context) =>
+        await TodoLoader.loadTodos(context, args),
     },
     user: {
       type: UserType,

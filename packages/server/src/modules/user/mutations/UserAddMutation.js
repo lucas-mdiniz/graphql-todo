@@ -30,7 +30,7 @@ const mutation = mutationWithClientMutationId({
         token,
       };
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   },
   outputFields: {

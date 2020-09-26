@@ -8,6 +8,8 @@ const getUser = async (token) => {
     if (!token) {
       return null;
     }
+
+    token = token.split('Bearer ')[1];
     const { id } = jwt.verify(token, config.JWT_SECRET);
 
     const user = await User.findOne({ _id: id, 'tokens.token': token });

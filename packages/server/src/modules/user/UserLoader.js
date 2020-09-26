@@ -3,12 +3,13 @@ import { mongooseLoader } from '@entria/graphql-mongoose-loader';
 
 import UserModel from './UserModel';
 
-class User {
+export default class User {
   constructor(data) {
-    (this.id = data.id || data._id),
-      (this.email = data.email),
-      (this.password = data.password),
-      (this.tokens = data.tokens);
+    this._id = data._id;
+    this.id = data.id || data._id;
+    this.email = data.email;
+    this.password = data.password;
+    this.tokens = data.tokens;
   }
 }
 

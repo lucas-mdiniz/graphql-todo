@@ -15,14 +15,20 @@ const mutation = mutationWithClientMutationId({
       type: new GraphQLNonNull(GraphQLBoolean),
     },
   },
-  mutateAndGetPayload: async (args) => {
+  mutateAndGetPayload: async (args, context) => {
     const { description, done } = args;
+
+    if (!context.user) {
+      return {
+        error: 'User not logged in.',
+      };
+    }
 
     try {
       const todo = new TodoModel({
         description,
         done,
-        owner: '5f5d12132dbe30184fe98027',
+        owner: context.user._id,
       });
       await todo.save();
       return {
@@ -37,7 +43,6 @@ const mutation = mutationWithClientMutationId({
     todoEdge: {
       type: TodoConnection.edgeType,
       resolve: async ({ id }, _, context) => {
-        console.log(id);
         if (!id) {
           return null;
         }
@@ -49,6 +54,10 @@ const mutation = mutationWithClientMutationId({
           node: newTodo,
         };
       },
+    },
+    error: {
+      type: GraphQLString,
+      resolve: ({ error }) => error,
     },
   },
 });

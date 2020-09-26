@@ -7,9 +7,6 @@ import {
 } from 'graphql-relay';
 import { nodeInterface } from '../../interface/node';
 
-import { TodoConnection } from '../todo/TodoType';
-import Todo from '../todo/TodoModel';
-
 const UserType = new GraphQLObjectType({
   name: 'User',
   fields: () => ({
@@ -17,16 +14,6 @@ const UserType = new GraphQLObjectType({
     email: {
       type: GraphQLString,
       resolve: (user) => user.email,
-    },
-    todos: {
-      type: GraphQLNonNull(TodoConnection.connectionType),
-      args: {
-        ...connectionArgs,
-      },
-      resolve: async (user, args) => {
-        const todos = await Todo.find({ owner: user._id });
-        return connectionFromArray(todos, args);
-      },
     },
   }),
   interfaces: () => [nodeInterface],

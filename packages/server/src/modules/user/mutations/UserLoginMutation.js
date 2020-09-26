@@ -26,6 +26,7 @@ const mutation = mutationWithClientMutationId({
     return {
       user,
       token,
+      error: null,
     };
   },
   outputFields: {
@@ -36,6 +37,10 @@ const mutation = mutationWithClientMutationId({
     token: {
       type: GraphQLString,
       resolve: ({ token }) => token,
+    },
+    error: {
+      type: GraphQLString,
+      resolve: ({ error }) => error,
     },
   },
 });
