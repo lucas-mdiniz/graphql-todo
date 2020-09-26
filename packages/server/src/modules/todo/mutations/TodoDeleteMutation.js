@@ -25,9 +25,7 @@ const mutation = mutationWithClientMutationId({
   outputFields: {
     todo: {
       type: TodoType,
-      resolve: (todo) => {
-        return todo;
-      },
+      resolve: ({ todo }) => todo,
     },
   },
 });

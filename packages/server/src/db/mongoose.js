@@ -1,13 +1,12 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import { config } from '../config';
 
-mongoose.connect(
-  'mongodb+srv://lucasmdiniz:32120720@cluster0.l91lh.mongodb.net/graphql-todo?retryWrites=true&w=majority',
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-  }
-);
+mongoose.connect(config.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true,
+});
 
 const db = mongoose.connection;
 

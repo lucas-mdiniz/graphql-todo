@@ -1,13 +1,11 @@
 import { GraphQLObjectType, GraphQLID, GraphQLNonNull } from 'graphql';
-import {
-  fromGlobalId,
-  connectionArgs,
-  connectionFromArray,
-} from 'graphql-relay';
+import { fromGlobalId, connectionArgs } from 'graphql-relay';
 
 import { nodeField } from '../../interface/node';
 import TodoType, { TodoConnection } from '../../modules/todo/TodoType';
-import Todo from '../../modules/todo/TodoModel';
+import UserType from '../../modules/user/UserType';
+import * as TodoLoader from '../../modules/todo/TodoLoader';
+import * as UserLoader from '../../modules/user/UserLoader';
 
 const QueryType = new GraphQLObjectType({
   name: 'Query',
@@ -17,19 +15,22 @@ const QueryType = new GraphQLObjectType({
         id: { type: GraphQLNonNull(GraphQLID) },
       },
       type: TodoType,
-      resolve: async (_, args) => {
-        const { id } = fromGlobalId(args.id);
-        const todo = await Todo.findById(id);
-        return todo;
-      },
+      resolve: async (_, { id }, context) =>
+        await TodoLoader.load(context, fromGlobalId(id).id),
     },
     todos: {
-      type: new GraphQLNonNull(TodoConnection.connectionType),
+      type: TodoConnection.connectionType,
       args: connectionArgs,
-      resolve: async (_, args) => {
-        const todos = await Todo.find();
-        return connectionFromArray(todos, args);
+      resolve: async (_, args, context) =>
+        await TodoLoader.loadTodos(context, args),
+    },
+    user: {
+      type: UserType,
+      args: {
+        id: { type: GraphQLNonNull(GraphQLID) },
       },
+      resolve: async (_, { id }, context) =>
+        await UserLoader.load(context, fromGlobalId(id).id),
     },
 
     node: nodeField,

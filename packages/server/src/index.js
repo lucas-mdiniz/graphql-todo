@@ -3,14 +3,25 @@ import { graphqlHTTP } from 'express-graphql';
 
 import './db/mongoose';
 import schema from './graphql/schema';
+import getUser from './auth';
+
+import * as loaders from './modules/loader';
+import { getDataloaders } from './modules/loader/loaderRegistry';
 
 const app = express();
 
 app.use(
   '/graphql',
-  graphqlHTTP({
-    schema: schema,
-    graphiql: true,
+  graphqlHTTP(async (req) => {
+    const dataloaders = getDataloaders(loaders);
+    return {
+      schema: schema,
+      graphiql: true,
+      context: {
+        user: await getUser(req.headers.authorization),
+        dataloaders,
+      },
+    };
   })
 );
 

@@ -11,6 +11,11 @@ const TodoSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
 });
 
 const TodoModel = mongoose.model('Todo', TodoSchema);
