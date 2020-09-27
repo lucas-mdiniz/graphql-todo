@@ -1,10 +1,5 @@
-import { GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
-import {
-  connectionArgs,
-  connectionDefinitions,
-  connectionFromArray,
-  globalIdField,
-} from 'graphql-relay';
+import { GraphQLObjectType, GraphQLString } from 'graphql';
+import { connectionDefinitions, globalIdField } from 'graphql-relay';
 import { nodeInterface } from '../../interface/node';
 
 const UserType = new GraphQLObjectType({

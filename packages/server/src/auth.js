@@ -6,7 +6,7 @@ import { config } from './config';
 const getUser = async (token) => {
   try {
     if (!token) {
-      return null;
+      return { user: null, token };
     }
 
     token = token.split('Bearer ')[1];
@@ -14,9 +14,9 @@ const getUser = async (token) => {
 
     const user = await User.findOne({ _id: id, 'tokens.token': token });
 
-    return user;
+    return { user, token };
   } catch (err) {
-    return { user: null };
+    return { user: null, token };
   }
 };
 
