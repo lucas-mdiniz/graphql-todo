@@ -17,6 +17,7 @@ const TodoType = new GraphQLObjectType({
     },
     done: {
       type: GraphQLNonNull(GraphQLBoolean),
+      defaultValue: false,
     },
   }),
   interfaces: () => [nodeInterface],

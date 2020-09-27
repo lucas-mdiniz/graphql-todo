@@ -11,23 +11,27 @@ const mutation = mutationWithClientMutationId({
     password: { type: new GraphQLNonNull(GraphQLString) },
   },
   mutateAndGetPayload: async ({ email, password }, context) => {
-    const user = await User.findByCredentials(email, password);
+    try {
+      const user = await User.findByCredentials(email, password);
 
-    const errorMessage = 'Unable to login';
+      const errorMessage = 'Unable to login';
 
-    if (!user) {
+      if (!user) {
+        return {
+          error: errorMessage,
+        };
+      }
+
+      const token = await user.generateAuthToken();
+
       return {
-        error: errorMessage,
+        user,
+        token,
+        error: null,
       };
+    } catch (error) {
+      throw new Error(error);
     }
-
-    const token = await user.generateAuthToken();
-
-    return {
-      user,
-      token,
-      error: null,
-    };
   },
   outputFields: {
     me: {

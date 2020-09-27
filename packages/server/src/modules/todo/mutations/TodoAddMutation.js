@@ -12,7 +12,7 @@ const mutation = mutationWithClientMutationId({
       type: new GraphQLNonNull(GraphQLString),
     },
     done: {
-      type: new GraphQLNonNull(GraphQLBoolean),
+      type: GraphQLBoolean,
     },
   },
   mutateAndGetPayload: async (args, context) => {
@@ -30,13 +30,15 @@ const mutation = mutationWithClientMutationId({
         done,
         owner: context.user._id,
       });
+
       await todo.save();
+
       return {
         id: todo._id,
         error: null,
       };
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   },
   outputFields: {

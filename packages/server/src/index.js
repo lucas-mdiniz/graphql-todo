@@ -14,11 +14,14 @@ app.use(
   '/graphql',
   graphqlHTTP(async (req) => {
     const dataloaders = getDataloaders(loaders);
+    const { user, token } = await getUser(req.headers.authorization);
+
     return {
       schema: schema,
       graphiql: true,
       context: {
-        user: await getUser(req.headers.authorization),
+        token,
+        user,
         dataloaders,
       },
     };

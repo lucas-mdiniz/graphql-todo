@@ -1,7 +1,8 @@
-import { GraphQLNonNull, GraphQLID } from 'graphql';
+import { GraphQLNonNull, GraphQLID, GraphQLString } from 'graphql';
 import { mutationWithClientMutationId, fromGlobalId } from 'graphql-relay';
 
-import Todo from '../TodoModel';
+import TodoModel from '../TodoModel';
+import Todo from '../TodoLoader';
 import TodoType from '../TodoType';
 
 const mutation = mutationWithClientMutationId({
@@ -11,21 +12,30 @@ const mutation = mutationWithClientMutationId({
       type: new GraphQLNonNull(GraphQLID),
     },
   },
-  mutateAndGetPayload: async (args) => {
+  mutateAndGetPayload: async (args, context) => {
+    if (!context.user) return { error: 'User not logged in.' };
+    console.log(context.user);
+
     const globalID = args.id;
     const { id } = fromGlobalId(globalID);
 
     try {
-      const todo = await Todo.findByIdAndDelete(id);
-      return todo;
+      const todo = await TodoModel.findByIdAndDelete(id);
+      if (!todo) return { error: 'Todo does not exist.' };
+
+      return { todo: new Todo(todo) };
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   },
   outputFields: {
     todo: {
       type: TodoType,
       resolve: ({ todo }) => todo,
+    },
+    error: {
+      type: GraphQLString,
+      resolve: ({ error }) => error,
     },
   },
 });

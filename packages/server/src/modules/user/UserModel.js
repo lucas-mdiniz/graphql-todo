@@ -18,6 +18,7 @@ const UserSchema = new Schema({
     type: String,
     minlength: 8,
     required: true,
+    trim: true,
   },
   tokens: [
     {

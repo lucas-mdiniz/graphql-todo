@@ -30,6 +30,13 @@ const mutation = mutationWithClientMutationId({
         token,
       };
     } catch (error) {
+      if (error.code === 11000) {
+        console.log('teste');
+        return {
+          error: 'User already exists.',
+        };
+      }
+
       throw new Error(error);
     }
   },
@@ -41,6 +48,10 @@ const mutation = mutationWithClientMutationId({
     token: {
       type: GraphQLString,
       resolve: ({ token }) => token,
+    },
+    error: {
+      type: GraphQLString,
+      resolve: ({ error }) => error,
     },
   },
 });
