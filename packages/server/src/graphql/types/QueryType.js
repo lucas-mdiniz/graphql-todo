@@ -1,4 +1,9 @@
-import { GraphQLObjectType, GraphQLID, GraphQLNonNull } from 'graphql';
+import {
+  GraphQLObjectType,
+  GraphQLID,
+  GraphQLNonNull,
+  GraphQLString,
+} from 'graphql';
 import { fromGlobalId, connectionArgs } from 'graphql-relay';
 
 import { nodeField } from '../../interface/node';
@@ -31,6 +36,17 @@ const QueryType = new GraphQLObjectType({
       },
       resolve: async (_, { id }, context) =>
         await UserLoader.load(context, fromGlobalId(id).id),
+    },
+    search: {
+      type: TodoConnection.connectionType,
+      args: {
+        ...connectionArgs,
+        query: {
+          type: GraphQLString,
+        },
+      },
+      resolve: async (_, args, context) =>
+        await TodoLoader.loadTodos(context, args),
     },
 
     node: nodeField,
