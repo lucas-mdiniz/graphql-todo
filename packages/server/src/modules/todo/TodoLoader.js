@@ -5,6 +5,8 @@ import {
   connectionFromMongoCursor,
 } from '@entria/graphql-mongoose-loader';
 
+import { escapeRegex } from '../../common/utils';
+
 export default class Todo {
   constructor(data) {
     this._id = data._id;
@@ -35,9 +37,17 @@ export const load = async (context, id) => {
 };
 
 export const loadTodos = async (context, args) => {
+  const conditions = { owner: context.user?._id };
   // For a list of elements I have to filter by the authenticated user here.
+  if (args.query) {
+    conditions.description = {
+      $regex: new RegExp(`^(.*?(${escapeRegex(args.query)})[^$]*)$`),
+      $options: 'ig',
+    };
+  }
+
   return connectionFromMongoCursor({
-    cursor: TodoModel.find({ owner: context.user?._id }),
+    cursor: TodoModel.find(conditions),
     context,
     args,
     loader: load,
